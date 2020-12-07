@@ -1,6 +1,7 @@
 const md5 = require('blueimp-md5')
 const {default: Bot} = require('el-bot')
-const ex = ['大吉', '吉', '半吉', '小吉', '末吉', '凶', '大凶','小凶','无法测算','末小凶']
+const ex = ['大吉', '吉', '半吉', '小吉', '末吉', '凶', '大凶','小凶','吉','末小凶']
+const check = require('mirai-ts')
 
 // 生成当前时间日期数据
 function generateDate(timestamp) {
@@ -33,8 +34,11 @@ function splitMessage(message) {
     //去掉空格
     messageText = messageText.replace(/\s+/g,'')
     //切割并取出求签内容
-    console.log(messageText.split('/求签'))
-    return messageText.split('/求签')[1]
+    let text = messageText.split('/求签')[1]
+    if(text === ''){
+        throw new Error('空的你是要求什么嘛')
+    }
+    return text
 }
 // 求签
 function fortune(message) {
@@ -61,7 +65,12 @@ function fortune(message) {
 module.exports = function (ctx) {
     const mirai = ctx.mirai
     mirai.on('message', msg => {
-        msg.reply(fortune(msg))
-        // console.log(generateDate(simpleMessage.timestamp))
+        if(msg.plain.indexOf('/求签') !== -1){
+            try {
+                msg.reply(fortune(msg))
+            }catch (e) {
+                msg.reply(e.message)
+            }
+        }
     })
 }
