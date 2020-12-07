@@ -64,7 +64,7 @@ function fortune(message) {
 
 module.exports = function (ctx) {
     const mirai = ctx.mirai
-    mirai.on('message', msg => {
+    mirai.on('GroupMessage', msg => {
         if(msg.plain.indexOf('/求签') !== -1){
             try {
                 msg.reply(fortune(msg))
